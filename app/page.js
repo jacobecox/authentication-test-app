@@ -10,7 +10,7 @@ export default function HomePage() {
     const fusionAuthIssuer = process.env.NEXT_PUBLIC_FUSIONAUTH_ISSUER;
     const clientId = process.env.NEXT_PUBLIC_FUSIONAUTH_CLIENT_ID;
     
-    const builtLoginUrl = `${fusionAuthIssuer}/oauth2/authorize?client_id=${clientId}&response_type=code&scope=openid profile email&redirect_uri=${encodeURIComponent(`${window.location.origin}/api/auth/callback`)}`;
+    const builtLoginUrl = `${fusionAuthIssuer}/oauth2/authorize?client_id=${clientId}&response_type=code&scope=openid&redirect_uri=${encodeURIComponent(`${window.location.origin}/api/auth/callback`)}`;
     setLoginUrl(builtLoginUrl);
     
     const urlParams = new URLSearchParams(window.location.search);
