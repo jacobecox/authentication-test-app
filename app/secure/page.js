@@ -19,7 +19,6 @@ export default async function SecurePage() {
     <div>
       <h1>🔒 Secure Page</h1>
       <p>Success! You're authenticated.</p>
-      <p>Welcome, {authResult.user.email}!</p>
       
       <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
         <a href="/">
@@ -37,3 +36,5 @@ export default async function SecurePage() {
     </div>
   );
 }
+
+

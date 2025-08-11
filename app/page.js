@@ -18,6 +18,8 @@ export default function HomePage() {
     if (urlError) {
       setError(urlError);
     }
+    
+
   }, []);
 
   return (

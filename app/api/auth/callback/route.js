@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { exchangeCodeForTokens } from '../../../../lib/auth';
+import { exchangeCodeForTokens, verifyJWT } from '../../../../lib/auth';
 
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url);
@@ -13,6 +13,22 @@ export async function GET(request) {
   try {
     const redirectUri = `${origin}/api/auth/callback`;
     const tokenData = await exchangeCodeForTokens(code, redirectUri);
+    
+    // Verify the access token before creating cookies
+    const verifiedPayload = await verifyJWT(tokenData.access_token);
+    if (!verifiedPayload) {
+      console.error('Token verification failed during login');
+      return NextResponse.redirect(new URL('/?error=token_verification_failed', request.url));
+    }
+    
+    // If ID token exists, verify it as well
+    if (tokenData.id_token) {
+      const verifiedIdToken = await verifyJWT(tokenData.id_token);
+      if (!verifiedIdToken) {
+        console.error('ID token verification failed during login');
+        return NextResponse.redirect(new URL('/?error=token_verification_failed', request.url));
+      }
+    }
     
     const response = NextResponse.redirect(new URL('/secure', request.url));
     

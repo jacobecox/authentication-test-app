@@ -1,20 +1,31 @@
 import { NextResponse } from 'next/server';
 
 export async function GET(request) {
-
+  // This is a direct logout request - clear cookies first, then redirect to FusionAuth logout
   const { origin } = new URL(request.url);
-  
   const fusionAuthIssuer = process.env.FUSIONAUTH_ISSUER;
   const clientId = process.env.FUSIONAUTH_CLIENT_ID;
-  const debugLogoutUrl = `${fusionAuthIssuer}/oauth2/logout?client_id=${clientId}&post_logout_redirect_uri=${encodeURIComponent(origin)}`;
-
   
-  // Redirect to FusionAuth logout which will then redirect back to our home page
-  const response = NextResponse.redirect(debugLogoutUrl);
+  // Use the home page as the post-logout redirect to avoid redirect loops
+  const logoutUrl = `${fusionAuthIssuer}/oauth2/logout?client_id=${clientId}&post_logout_redirect_uri=${encodeURIComponent(origin + '/')}`;
   
-  // Clear the authentication cookies
-  response.cookies.delete('access_token');
-  response.cookies.delete('id_token');
+  // Create response that redirects to FusionAuth logout
+  const response = NextResponse.redirect(logoutUrl);
+  
+  // Clear cookies immediately before redirecting to FusionAuth
+  response.cookies.delete('access_token', { 
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  });
+  
+  response.cookies.delete('id_token', { 
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  });
   
   return response;
 }
