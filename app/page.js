@@ -5,11 +5,10 @@ import { useEffect, useState } from 'react';
 export default function HomePage() {
   const [loginUrl, setLoginUrl] = useState('');
   const [error, setError] = useState('');
+  const fusionAuthIssuer = process.env.NEXT_PUBLIC_FUSIONAUTH_ISSUER;
+  const clientId = process.env.NEXT_PUBLIC_FUSIONAUTH_CLIENT_ID;
   
   useEffect(() => {
-    const fusionAuthIssuer = process.env.NEXT_PUBLIC_FUSIONAUTH_ISSUER;
-    const clientId = process.env.NEXT_PUBLIC_FUSIONAUTH_CLIENT_ID;
-    
     const builtLoginUrl = `${fusionAuthIssuer}/oauth2/authorize?client_id=${clientId}&response_type=code&scope=openid&redirect_uri=${encodeURIComponent(`http://localhost:3000/api/auth/callback`)}`;
     setLoginUrl(builtLoginUrl);
     
